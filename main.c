@@ -2,25 +2,48 @@
 #include  <string.h>
 #include  <sys/types.h>
 
-#define   MAX_COUNT  200
-#define   BUF_SIZE   100
-// Fareed Balogun @02895579
-void  main(void)
-{
-     pid_t  pid;
-     int    i;
-     char   buf[BUF_SIZE];
 
-     pid = fork();
+#include  <stdio.h>
+#include  <stdlib.h>
+#include  <sys/types.h>
+#include  <time.h> 
 
-     for (i = 1; i <= MAX_COUNT; i++) {
-       if(pid > 0){
-         sprintf(buf, "This line is from  the parent pid %d, value = %d\n", getpid(), i); 
-       }
-       
-       else if(pid == 0){
-         sprintf(buf, "This line is from the child pid %d, value = %d\n", getpid(), i);  
-       }
-         write(1, buf, strlen(buf));  
-     } 
+#define   MAX  2
+
+void  ChildProcess(void);                /* child process prototype  */
+
+void  main(void) {
+  int status, i;
+  int pid[MAX];
+
+  for (i = 0; i < MAX; i++) {
+    pid[i] = fork();
+    
+    if (pid[i] == 0) {
+      ChildProcess();
+    } else if (pid[i] == -1) {
+      printf("Error");
+    }
+  }
+  for (i = 0; i < MAX; i++) {
+     wait(&status);
+     printf("Child Pid: %d has completed!\n", pid[i]);
+  }
+}
+
+void  ChildProcess(void) {
+  int i;
+  srand(time(0));
+  int Num = (rand() % 30 + 1);
+
+  for (i = 1; i <= Num; i++) {
+    int Time = (rand() % 10 + 1);
+    pid_t child = getpid();
+    pid_t parent = getppid();
+
+    printf("Child Pid: %d is going to sleep!\n", child);
+    sleep(Time);
+    printf(" Child Pid: %d is awake!\n Where is my Parent: %d?\n", child, parent);
+  }
+  exit(0);
 }

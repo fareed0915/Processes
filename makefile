@@ -1,2 +1,2 @@
-list: main.c 
-gcc -o main list.c list.h main.c 
+proc: proc.c
+  gcc proc.c -o proc
